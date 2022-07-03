@@ -38,13 +38,48 @@ namespace GameOfLife
         // Calculate the next generation of cells
         private void NextGeneration()
         {
+            var scratchpad = (bool[,])universe.Clone();
+            for(int y = 0; y < universe.GetLength(1); ++y)
+            {
+                for(int x = 0; x < universe.GetLength(0); ++x)
+                {
+                    var cell = universe[x, y];
 
+                    var neighbors = CountNeighbors(x, y);
+
+                    if(cell && neighbors < 2)
+                    {
+                        scratchpad[x, y] = false;
+                    }
+
+                    else if(cell && neighbors > 3)
+                    {
+                        scratchpad[x, y] = false;
+                    }
+
+                    else if(cell && (neighbors == 2 || neighbors == 3))
+                    {
+                        continue;
+                    }
+
+                    else if(cell == false && neighbors == 3)
+                    {
+                        scratchpad[x, y] = true;
+                    }
+                }
+            }
+
+            var temp = universe;
+            universe = scratchpad;
+            scratchpad = temp;
 
             // Increment generation count
             generations++;
 
             // Update status strip generations
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+
+            graphicsPanel1.Invalidate();
         }
 
         // The event called by the timer every Interval milliseconds.
@@ -86,8 +121,26 @@ namespace GameOfLife
                         e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
 
+                    var font = new Font("Arial", 10f);
+
+                    var format = new StringFormat();
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Center;
+
+                    var neighborBrush =
+                        universe[x, y] ?
+                        new SolidBrush(Color.Green)
+                        : new SolidBrush(Color.Red);
+                    var neighbors = CountNeighbors(x, y);
+
+                    e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
+
                     // Outline the cell with a pen
                     e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+
+                    neighborBrush.Dispose();
+                    font.Dispose();
+                    format.Dispose();
                 }
             }
 
@@ -122,6 +175,61 @@ namespace GameOfLife
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private int CountNeighbors(int x, int y)
+        {
+            int count = 0;
+            var xLength = universe.GetLength(0);
+            var yLength = universe.GetLength(1);
+
+            for(int yOffset = -1; yOffset <= 1; ++yOffset)
+            {
+                for(int xOffset = -1; xOffset <= 1; ++xOffset)
+                {
+                    var xCheck = x + xOffset;
+                    var yCheck = y + yOffset;
+
+                    if
+                    (
+                        xCheck < 0
+                        || yCheck < 0
+                        || xCheck >= xLength
+                        || yCheck >= yLength
+                    )
+                    { continue; }
+
+                    else if(xCheck == x && yCheck == y) { continue; }
+
+                    else if (universe[xCheck, yCheck] == true) count++;
+                }
+            }
+            return count;
+        }
+
+        private void PlayPauseButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = !timer.Enabled;
+        }
+
+        private void nextGenerationButton_Click(object sender, EventArgs e)
+        {
+            NextGeneration();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+
+            for(int y = 0; y < universe.GetLength(1); ++y)
+            {
+                for(int x = 0; x < universe.GetLength(0); ++x)
+                {
+                    universe[x, y] = false;
+                }
+            }
+
+            graphicsPanel1.Invalidate();
         }
     }
 }
