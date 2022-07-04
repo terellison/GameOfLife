@@ -32,60 +32,18 @@ namespace GameOfLife
             randomizeToolStripMenuItem.PerformClick();
         }
 
-        // Calculate the next generation of cells
-        private void NextGeneration()
+        // The event called by the timer every Interval milliseconds.
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            var scratchpad = (bool[,])universe.Clone();
-            for(var y = 0; y < universe.GetLength(1); ++y)
-            {
-                for(var x = 0; x < universe.GetLength(0); ++x)
-                {
-                    var cell = universe[x, y];
-
-                    var neighbors = CountNeighbors(x, y);
-
-                    if(cell && neighbors < 2)
-                    {
-                        scratchpad[x, y] = false;
-                    }
-
-                    else if(cell && neighbors > 3)
-                    {
-                        scratchpad[x, y] = false;
-                    }
-
-                    else if(cell && (neighbors == 2 || neighbors == 3))
-                    {
-                        continue;
-                    }
-
-                    else if(cell == false && neighbors == 3)
-                    {
-                        scratchpad[x, y] = true;
-                    }
-                }
-            }
-
-            universe = scratchpad;
+            universe = NextGeneration(universe);
 
             // Increment generation count
             generations++;
 
             // Update status strip generations
-            UpdateGenerationLabel();
+            UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
 
             graphicsPanel1.Invalidate();
-        }
-
-        private void UpdateGenerationLabel()
-        {
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-        }
-
-        // The event called by the timer every Interval milliseconds.
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            NextGeneration();
         }
 
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
@@ -133,7 +91,7 @@ namespace GameOfLife
                         universe[x, y] ?
                         new SolidBrush(Color.Green)
                         : new SolidBrush(Color.Red);
-                    var neighbors = CountNeighbors(x, y);
+                    var neighbors = CountNeighbors(x, y, universe);
 
                     e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
 
@@ -179,39 +137,6 @@ namespace GameOfLife
             Close();
         }
 
-        private int CountNeighbors(int x, int y)
-        {
-            var count = 0;
-            var xLength = universe.GetLength(0);
-            var yLength = universe.GetLength(1);
-
-            for(var yOffset = -1; yOffset <= 1; ++yOffset)
-            {
-                for(var xOffset = -1; xOffset <= 1; ++xOffset)
-                {
-                    var xCheck = x + xOffset;
-                    var yCheck = y + yOffset;
-
-                    if
-                    (
-                        xCheck < 0
-                        || yCheck < 0
-                        || xCheck >= xLength
-                        || yCheck >= yLength
-                    )
-                    { continue; }
-
-                    else if(xCheck == x && yCheck == y) { continue; }
-
-                    else if(universe[xCheck, yCheck] == true)
-                    {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
-
         private void PlayPauseButton_Click(object sender, EventArgs e)
         {
             timer.Enabled = !timer.Enabled;
@@ -219,7 +144,15 @@ namespace GameOfLife
 
         private void nextGenerationButton_Click(object sender, EventArgs e)
         {
-            NextGeneration();
+            universe = NextGeneration(universe);
+
+            // Increment generation count
+            generations++;
+
+            // Update status strip generations
+            UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
+
+            graphicsPanel1.Invalidate();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -236,7 +169,7 @@ namespace GameOfLife
                 }
             }
             generations = 0;
-            UpdateGenerationLabel();
+            UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
             graphicsPanel1.Invalidate();
         }
 
@@ -255,7 +188,7 @@ namespace GameOfLife
                 }
             }
             generations = 0;
-            UpdateGenerationLabel();
+            UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
             graphicsPanel1.Invalidate();
         }
 
@@ -264,7 +197,7 @@ namespace GameOfLife
             timer.Enabled = false;
             universe = ReadCellsFile();
             generations = 0;
-            UpdateGenerationLabel();
+            UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
             graphicsPanel1.Invalidate();
         }
 

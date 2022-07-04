@@ -100,5 +100,80 @@ namespace GameOfLife.Utilities
 
             return data;
         }
+
+        public static bool[,] NextGeneration(bool[,] universe)
+        {
+            var scratchpad = (bool[,])universe.Clone();
+            for(var y = 0; y < universe.GetLength(1); ++y)
+            {
+                for(var x = 0; x < universe.GetLength(0); ++x)
+                {
+                    var cell = universe[x, y];
+
+                    var neighbors = CountNeighbors(x, y, universe);
+
+                    if(cell && neighbors < 2)
+                    {
+                        scratchpad[x, y] = false;
+                    }
+
+                    else if(cell && neighbors > 3)
+                    {
+                        scratchpad[x, y] = false;
+                    }
+
+                    else if(cell && (neighbors == 2 || neighbors == 3))
+                    {
+                        continue;
+                    }
+
+                    else if(cell == false && neighbors == 3)
+                    {
+                        scratchpad[x, y] = true;
+                    }
+                }
+            }
+
+            return scratchpad;
+        }
+
+        public static int CountNeighbors(int x, int y, bool[,] universe)
+        {
+            var count = 0;
+            var xLength = universe.GetLength(0);
+            var yLength = universe.GetLength(1);
+
+            for(var yOffset = -1; yOffset <= 1; ++yOffset)
+            {
+                for(var xOffset = -1; xOffset <= 1; ++xOffset)
+                {
+                    var xCheck = x + xOffset;
+                    var yCheck = y + yOffset;
+
+                    if
+                    (
+                        xCheck < 0
+                        || yCheck < 0
+                        || xCheck >= xLength
+                        || yCheck >= yLength
+                    )
+                    { continue; }
+
+                    else if(xCheck == x && yCheck == y) { continue; }
+
+                    else if(universe[xCheck, yCheck] == true)
+                    {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        // Calculate the next generation of cells
+        public static void UpdateGenerationLabel(ToolStripStatusLabel toolStripStatusLabelGenerations, ref int generations)
+        {
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+        }
     }
 }
