@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using static GameOfLife.Utilities.Utilities;
 
 namespace GameOfLife
 {
@@ -225,6 +226,8 @@ namespace GameOfLife
         {
             timer.Enabled = false;
 
+            universe = new bool[50, 50];
+
             for(var y = 0; y < universe.GetLength(1); ++y)
             {
                 for(var x = 0; x < universe.GetLength(0); ++x)
@@ -242,6 +245,8 @@ namespace GameOfLife
             var rand = new Random();
             timer.Enabled = false;
 
+            universe = new bool[50, 50];
+
             for(var y = 0; y < universe.GetLength(1); ++y)
             {
                 for(var x = 0; x < universe.GetLength(0); ++x)
@@ -252,6 +257,21 @@ namespace GameOfLife
             generations = 0;
             UpdateGenerationLabel();
             graphicsPanel1.Invalidate();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            universe = ReadCellsFile();
+            generations = 0;
+            UpdateGenerationLabel();
+            graphicsPanel1.Invalidate();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            Save(universe);
         }
     }
 }
