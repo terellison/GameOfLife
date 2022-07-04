@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 
 // Change the namespace to your project's namespace.
-namespace GameOfLife
+namespace GameOfLife.Forms
 {
     internal class GraphicsPanel : Panel
     {

@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using static GameOfLife.Utilities.Utilities;
 
-namespace GameOfLife
+namespace GameOfLife.Forms
 {
-    public partial class Form1 : Form
+    public partial class GameofLifeForm : Form
     {
         // The universe array
         private bool[,] universe = new bool[50, 50];
@@ -20,7 +20,7 @@ namespace GameOfLife
         // Generation count
         private int generations = 0;
 
-        public Form1()
+        public GameofLifeForm()
         {
             InitializeComponent();
 

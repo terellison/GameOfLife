@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameOfLife.Forms;
+using System;
 using System.Windows.Forms;
 
 namespace GameOfLife
@@ -13,7 +14,7 @@ namespace GameOfLife
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new GameofLifeForm());
         }
     }
 }
