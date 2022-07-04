@@ -27,6 +27,8 @@ namespace GameOfLife
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
+
+            randomizeToolStripMenuItem.PerformClick();
         }
 
         // Calculate the next generation of cells
