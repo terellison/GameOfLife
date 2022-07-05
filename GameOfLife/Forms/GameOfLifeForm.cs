@@ -206,5 +206,24 @@ namespace GameOfLife.Forms
             timer.Enabled = false;
             Save(universe);
         }
+
+        private void resizeUniverseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new ResizeUniverseDialog();
+
+            dialog.UniverseWidth = universe.GetLength(0);
+            dialog.UniverseHeight = universe.GetLength(1);
+            
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                timer.Enabled = false;
+                universe = new bool[dialog.UniverseWidth, dialog.UniverseHeight];
+                generations = 0;
+                UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
+                graphicsPanel1.Invalidate();
+            }
+
+            dialog.Dispose();
+        }
     }
 }
