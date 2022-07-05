@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GameOfLife.Forms
@@ -20,8 +13,14 @@ namespace GameOfLife.Forms
             get => height;
             set
             {
-                if(value < 0) height = 5;
-                else height = value;
+                if(value < 0)
+                {
+                    height = 5;
+                }
+                else
+                {
+                    height = value;
+                }
 
                 heightTextBox.Text = height.ToString();
             }
@@ -32,8 +31,14 @@ namespace GameOfLife.Forms
             get => width;
             set
             {
-                if(value < 0) width = 5;
-                else width = value;
+                if(value < 0)
+                {
+                    width = 5;
+                }
+                else
+                {
+                    width = value;
+                }
 
                 widthTextbox.Text = width.ToString();
             }

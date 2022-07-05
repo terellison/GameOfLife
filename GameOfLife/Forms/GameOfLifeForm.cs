@@ -209,11 +209,12 @@ namespace GameOfLife.Forms
 
         private void resizeUniverseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new ResizeUniverseDialog();
+            var dialog = new ResizeUniverseDialog
+            {
+                UniverseWidth = universe.GetLength(0),
+                UniverseHeight = universe.GetLength(1)
+            };
 
-            dialog.UniverseWidth = universe.GetLength(0);
-            dialog.UniverseHeight = universe.GetLength(1);
-            
             if(dialog.ShowDialog() == DialogResult.OK)
             {
                 timer.Enabled = false;
