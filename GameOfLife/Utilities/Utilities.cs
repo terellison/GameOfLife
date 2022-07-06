@@ -222,7 +222,7 @@ namespace GameOfLife.Utilities
             return count;
         }
 
-        
+
         public static void UpdateGenerationLabel(ToolStripStatusLabel toolStripStatusLabelGenerations, ref int generations)
         {
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
