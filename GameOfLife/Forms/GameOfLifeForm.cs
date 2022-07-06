@@ -91,7 +91,8 @@ namespace GameOfLife.Forms
                         universe[x, y] ?
                         new SolidBrush(Color.Green)
                         : new SolidBrush(Color.Red);
-                    var neighbors = CountNeighbors(x, y, universe);
+
+                    var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
                     e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
 
@@ -225,6 +226,21 @@ namespace GameOfLife.Forms
             }
 
             dialog.Dispose();
+        }
+
+        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(!toroidalToolStripMenuItem.Checked)
+            {
+                Toroidal = true;
+                toroidalToolStripMenuItem.Checked = true;
+            }
+            else
+            {
+                Toroidal = false;
+                toroidalToolStripMenuItem.Checked = false;
+            }
+            graphicsPanel1.Invalidate();
         }
     }
 }

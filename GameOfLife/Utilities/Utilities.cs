@@ -69,6 +69,8 @@ namespace GameOfLife.Utilities
             }
         }
 
+        public static bool Toroidal = false;
+
         private static bool[,] ProcessFileContents(List<string> fileContents)
         {
             var height = 0;
@@ -101,6 +103,7 @@ namespace GameOfLife.Utilities
             return data;
         }
 
+        // Calculate the next generation of cells
         public static bool[,] NextGeneration(bool[,] universe)
         {
             var scratchpad = (bool[,])universe.Clone();
@@ -110,7 +113,7 @@ namespace GameOfLife.Utilities
                 {
                     var cell = universe[x, y];
 
-                    var neighbors = CountNeighbors(x, y, universe);
+                    var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
                     if(cell && neighbors < 2)
                     {
@@ -170,7 +173,56 @@ namespace GameOfLife.Utilities
             return count;
         }
 
-        // Calculate the next generation of cells
+        public static int CountNeighborsToroidal(int x, int y, bool[,] universe)
+        {
+            var count = 0;
+            var xLength = universe.GetLength(0);
+            var yLength = universe.GetLength(1);
+
+            for(var yOffset = -1; yOffset <= 1; ++yOffset)
+            {
+                for(var xOffset = -1; xOffset <= 1; ++xOffset)
+                {
+                    var xCheck = x + xOffset;
+                    var yCheck = y + yOffset;
+
+                    if(xOffset == 0 && yOffset == 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if(xCheck < 0)
+                        {
+                            xCheck = xLength - 1;
+                        }
+
+                        if(yCheck < 0)
+                        {
+                            yCheck = yLength - 1;
+                        }
+
+                        if(xCheck >= xLength)
+                        {
+                            xCheck = 0;
+                        }
+
+                        if(yCheck >= yLength)
+                        {
+                            yCheck = 0;
+                        }
+
+                        if(universe[xCheck, yCheck] == true)
+                        {
+                            ++count;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        
         public static void UpdateGenerationLabel(ToolStripStatusLabel toolStripStatusLabelGenerations, ref int generations)
         {
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
