@@ -210,22 +210,21 @@ namespace GameOfLife.Forms
 
         private void resizeUniverseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new ResizeUniverseDialog
+            using(var dialog = new ResizeUniverseDialog
             {
                 UniverseWidth = universe.GetLength(0),
                 UniverseHeight = universe.GetLength(1)
-            };
-
-            if(dialog.ShowDialog() == DialogResult.OK)
+            })
             {
-                timer.Enabled = false;
-                universe = new bool[dialog.UniverseWidth, dialog.UniverseHeight];
-                generations = 0;
-                UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
-                graphicsPanel1.Invalidate();
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    timer.Enabled = false;
+                    universe = new bool[dialog.UniverseWidth, dialog.UniverseHeight];
+                    generations = 0;
+                    UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
+                    graphicsPanel1.Invalidate();
+                }
             }
-
-            dialog.Dispose();
         }
 
         private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
