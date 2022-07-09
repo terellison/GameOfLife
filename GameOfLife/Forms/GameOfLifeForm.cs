@@ -241,5 +241,22 @@ namespace GameOfLife.Forms
             }
             graphicsPanel1.Invalidate();
         }
+
+        private void changeGenerationLengthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+
+            using(var dialog = new ChangeGenerationLengthDialog
+            {
+                GenerationLength = timer.Interval
+            })
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    timer.Interval = dialog.GenerationLength;
+                }
+            }
+
+        }
     }
 }
