@@ -20,6 +20,8 @@ namespace GameOfLife.Forms
         // Generation count
         private int generations = 0;
 
+        private bool DrawGrid = true;
+
         public GameofLifeForm()
         {
             InitializeComponent();
@@ -28,7 +30,7 @@ namespace GameOfLife.Forms
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
-
+            showGridToolStripMenuItem.Checked = DrawGrid;
             randomizeToolStripMenuItem.PerformClick();
         }
 
@@ -94,10 +96,14 @@ namespace GameOfLife.Forms
 
                     var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
+
                     e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    if(DrawGrid)
+                    {
+                        e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    }
 
                     neighborBrush.Dispose();
                     font.Dispose();
@@ -257,6 +263,22 @@ namespace GameOfLife.Forms
                 }
             }
 
+        }
+
+        private void showGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(showGridToolStripMenuItem.Checked)
+            {
+                showGridToolStripMenuItem.Checked = false;
+                DrawGrid = false;
+            }
+            else
+            {
+                showGridToolStripMenuItem.Checked = true;
+                DrawGrid = true;
+            }
+
+            graphicsPanel1.Invalidate();
         }
     }
 }
