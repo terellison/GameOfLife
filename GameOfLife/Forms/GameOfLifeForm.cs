@@ -24,6 +24,8 @@ namespace GameOfLife.Forms
 
         private bool ShowNeighbors = true;
 
+        private bool ShowCellsAlive = true;
+
         public GameofLifeForm()
         {
             InitializeComponent();
@@ -32,8 +34,12 @@ namespace GameOfLife.Forms
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
+
             showGridToolStripMenuItem.Checked = DrawGrid;
             showNeighborCountToolStripMenuItem.Checked = ShowNeighbors;
+            showCellsAliveToolStripMenuItem.Checked = ShowCellsAlive;
+            cellsAliveStatusLabel.Visible = ShowCellsAlive;
+
             randomizeToolStripMenuItem.PerformClick();
         }
 
@@ -48,16 +54,16 @@ namespace GameOfLife.Forms
             // Update status strip generations
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
 
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
         }
 
-        private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
+        private void graphicsPanel_Paint(object sender, PaintEventArgs e)
         {
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
-            var cellWidth = (float)graphicsPanel1.ClientSize.Width / universe.GetLength(0);
+            var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
-            var cellHeight = (float)graphicsPanel1.ClientSize.Height / universe.GetLength(1);
+            var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
 
             // A Pen for drawing the grid lines (color, width)
             var gridPen = new Pen(gridColor, 1);
@@ -83,25 +89,28 @@ namespace GameOfLife.Forms
                     {
                         e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
-
-                    var font = new Font("Arial", 10f);
-
-                    var format = new StringFormat
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    };
-
-                    var neighborBrush =
-                        universe[x, y] ?
-                        new SolidBrush(Color.Green)
-                        : new SolidBrush(Color.Red);
-
-                    var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
-
                     if(ShowNeighbors)
                     {
+                        var font = new Font("Arial", 10f);
+
+                        var format = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        };
+
+                        var neighborBrush =
+                            universe[x, y] ?
+                            new SolidBrush(Color.Green)
+                            : new SolidBrush(Color.Red);
+
+                        var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+
                         e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
+
+                        neighborBrush.Dispose();
+                        font.Dispose();
+                        format.Dispose();
                     }
 
                     // Outline the cell with a pen
@@ -109,11 +118,12 @@ namespace GameOfLife.Forms
                     {
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
                     }
-
-                    neighborBrush.Dispose();
-                    font.Dispose();
-                    format.Dispose();
                 }
+            }
+
+            if(ShowCellsAlive)
+            {
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
             }
 
             // Cleaning up pens and brushes
@@ -121,14 +131,14 @@ namespace GameOfLife.Forms
             cellBrush.Dispose();
         }
 
-        private void graphicsPanel1_MouseClick(object sender, MouseEventArgs e)
+        private void graphicsPanel_MouseClick(object sender, MouseEventArgs e)
         {
             // If the left mouse button was clicked
             if(e.Button == MouseButtons.Left)
             {
                 // Calculate the width and height of each cell in pixels
-                var cellWidth = (float)graphicsPanel1.ClientSize.Width / universe.GetLength(0);
-                var cellHeight = (float)graphicsPanel1.ClientSize.Height / universe.GetLength(1);
+                var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
+                var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
 
                 // Calculate the cell that was clicked in
                 // CELL X = MOUSE X / CELL WIDTH
@@ -140,7 +150,7 @@ namespace GameOfLife.Forms
                 universe[x, y] = !universe[x, y];
 
                 // Tell Windows you need to repaint
-                graphicsPanel1.Invalidate();
+                graphicsPanel.Invalidate();
             }
         }
 
@@ -164,7 +174,7 @@ namespace GameOfLife.Forms
             // Update status strip generations
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
 
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -180,9 +190,16 @@ namespace GameOfLife.Forms
                     universe[x, y] = false;
                 }
             }
+
             generations = 0;
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
-            graphicsPanel1.Invalidate();
+
+            if(ShowCellsAlive)
+            {
+                cellsAliveStatusLabel.Text = "Cells Alive = 0";
+            }
+
+            graphicsPanel.Invalidate();
         }
 
         private void randomizeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -199,9 +216,17 @@ namespace GameOfLife.Forms
                     universe[x, y] = Convert.ToBoolean(rand.Next(0, 2));
                 }
             }
+
             generations = 0;
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
-            graphicsPanel1.Invalidate();
+
+            if(ShowCellsAlive)
+            {
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
+            }
+
+
+            graphicsPanel.Invalidate();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -210,7 +235,7 @@ namespace GameOfLife.Forms
             universe = ReadCellsFile();
             generations = 0;
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -231,9 +256,13 @@ namespace GameOfLife.Forms
                 {
                     timer.Enabled = false;
                     universe = new bool[dialog.UniverseWidth, dialog.UniverseHeight];
+
                     generations = 0;
                     UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
-                    graphicsPanel1.Invalidate();
+
+                    cellsAliveStatusLabel.Text = "Cells Alive = 0";
+
+                    graphicsPanel.Invalidate();
                 }
             }
         }
@@ -250,7 +279,7 @@ namespace GameOfLife.Forms
                 Toroidal = false;
                 toroidalToolStripMenuItem.Checked = false;
             }
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
         }
 
         private void changeGenerationLengthToolStripMenuItem_Click(object sender, EventArgs e)
@@ -283,7 +312,7 @@ namespace GameOfLife.Forms
                 DrawGrid = true;
             }
 
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
         }
 
         private void showNeighborCountToolStripMenuItem_Click(object sender, EventArgs e)
@@ -299,7 +328,24 @@ namespace GameOfLife.Forms
                 ShowNeighbors = true;
             }
 
-            graphicsPanel1.Invalidate();
+            graphicsPanel.Invalidate();
+        }
+
+        private void showCellsAliveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(showCellsAliveToolStripMenuItem.Checked)
+            {
+                showCellsAliveToolStripMenuItem.Checked = false;
+                ShowCellsAlive = false;
+            }
+            else
+            {
+                showCellsAliveToolStripMenuItem.Checked = true;
+                ShowCellsAlive = true;
+            }
+
+            cellsAliveStatusLabel.Visible = ShowCellsAlive;
+            graphicsPanel.Invalidate();
         }
     }
 }

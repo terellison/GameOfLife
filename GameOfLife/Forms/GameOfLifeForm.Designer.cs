@@ -54,8 +54,10 @@
             this.toolStripStatusLabelGenerations = new System.Windows.Forms.ToolStripStatusLabel();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.graphicsPanel1 = new GameOfLife.Forms.GraphicsPanel();
             this.showNeighborCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphicsPanel = new GameOfLife.Forms.GraphicsPanel();
+            this.cellsAliveStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.showCellsAliveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -259,7 +261,8 @@
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabelGenerations});
+            this.toolStripStatusLabelGenerations,
+            this.cellsAliveStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 323);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(573, 22);
@@ -276,7 +279,8 @@
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showGridToolStripMenuItem,
-            this.showNeighborCountToolStripMenuItem});
+            this.showNeighborCountToolStripMenuItem,
+            this.showCellsAliveToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -288,17 +292,6 @@
             this.showGridToolStripMenuItem.Text = "Show Grid";
             this.showGridToolStripMenuItem.Click += new System.EventHandler(this.showGridToolStripMenuItem_Click);
             // 
-            // graphicsPanel1
-            // 
-            this.graphicsPanel1.BackColor = System.Drawing.SystemColors.Window;
-            this.graphicsPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphicsPanel1.Location = new System.Drawing.Point(0, 55);
-            this.graphicsPanel1.Name = "graphicsPanel1";
-            this.graphicsPanel1.Size = new System.Drawing.Size(573, 268);
-            this.graphicsPanel1.TabIndex = 3;
-            this.graphicsPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel1_Paint);
-            this.graphicsPanel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel1_MouseClick);
-            // 
             // showNeighborCountToolStripMenuItem
             // 
             this.showNeighborCountToolStripMenuItem.Name = "showNeighborCountToolStripMenuItem";
@@ -306,12 +299,36 @@
             this.showNeighborCountToolStripMenuItem.Text = "Show Neighbor Count";
             this.showNeighborCountToolStripMenuItem.Click += new System.EventHandler(this.showNeighborCountToolStripMenuItem_Click);
             // 
+            // graphicsPanel
+            // 
+            this.graphicsPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.graphicsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphicsPanel.Location = new System.Drawing.Point(0, 55);
+            this.graphicsPanel.Name = "graphicsPanel";
+            this.graphicsPanel.Size = new System.Drawing.Size(573, 268);
+            this.graphicsPanel.TabIndex = 3;
+            this.graphicsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel_Paint);
+            this.graphicsPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseClick);
+            // 
+            // cellsAliveStatusLabel
+            // 
+            this.cellsAliveStatusLabel.Name = "cellsAliveStatusLabel";
+            this.cellsAliveStatusLabel.Size = new System.Drawing.Size(81, 17);
+            this.cellsAliveStatusLabel.Text = "Cells Alive = 0";
+            // 
+            // showCellsAliveToolStripMenuItem
+            // 
+            this.showCellsAliveToolStripMenuItem.Name = "showCellsAliveToolStripMenuItem";
+            this.showCellsAliveToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showCellsAliveToolStripMenuItem.Text = "Show Cells Alive";
+            this.showCellsAliveToolStripMenuItem.Click += new System.EventHandler(this.showCellsAliveToolStripMenuItem_Click);
+            // 
             // GameofLifeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 345);
-            this.Controls.Add(this.graphicsPanel1);
+            this.Controls.Add(this.graphicsPanel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -334,7 +351,7 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private GraphicsPanel graphicsPanel1;
+        private GraphicsPanel graphicsPanel;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
@@ -358,6 +375,8 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showNeighborCountToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel cellsAliveStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem showCellsAliveToolStripMenuItem;
     }
 }
 

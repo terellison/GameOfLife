@@ -222,10 +222,27 @@ namespace GameOfLife.Utilities
             return count;
         }
 
-
         public static void UpdateGenerationLabel(ToolStripStatusLabel toolStripStatusLabelGenerations, ref int generations)
         {
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+        }
+
+        public static void UpdateCellsAliveLabel(ToolStripStatusLabel toolStripStatusLabelCellsAlive, bool[,] universe)
+        {
+            var count = 0;
+
+            for(var y = 0; y < universe.GetLength(1); ++y)
+            {
+                for(var x = 0; x < universe.GetLength(1); ++x)
+                {
+                    if(universe[x, y])
+                    {
+                        ++count;
+                    }
+                }
+            }
+
+            toolStripStatusLabelCellsAlive.Text = $"Cells Alive = {count}";
         }
     }
 }
