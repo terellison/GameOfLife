@@ -42,6 +42,10 @@
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resizeUniverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeGenerationLengthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showNeighborCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showCellsAliveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toroidalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -52,12 +56,8 @@
             this.nextGenerationButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelGenerations = new System.Windows.Forms.ToolStripStatusLabel();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showNeighborCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.graphicsPanel = new GameOfLife.Forms.GraphicsPanel();
             this.cellsAliveStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.showCellsAliveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphicsPanel = new GameOfLife.Forms.GraphicsPanel();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -174,6 +174,37 @@
             this.changeGenerationLengthToolStripMenuItem.Text = "Change Generation Length";
             this.changeGenerationLengthToolStripMenuItem.Click += new System.EventHandler(this.changeGenerationLengthToolStripMenuItem_Click);
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showGridToolStripMenuItem,
+            this.showNeighborCountToolStripMenuItem,
+            this.showCellsAliveToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // showGridToolStripMenuItem
+            // 
+            this.showGridToolStripMenuItem.Name = "showGridToolStripMenuItem";
+            this.showGridToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showGridToolStripMenuItem.Text = "Show Grid";
+            this.showGridToolStripMenuItem.Click += new System.EventHandler(this.showGridToolStripMenuItem_Click);
+            // 
+            // showNeighborCountToolStripMenuItem
+            // 
+            this.showNeighborCountToolStripMenuItem.Name = "showNeighborCountToolStripMenuItem";
+            this.showNeighborCountToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showNeighborCountToolStripMenuItem.Text = "Show Neighbor Count";
+            this.showNeighborCountToolStripMenuItem.Click += new System.EventHandler(this.showNeighborCountToolStripMenuItem_Click);
+            // 
+            // showCellsAliveToolStripMenuItem
+            // 
+            this.showCellsAliveToolStripMenuItem.Name = "showCellsAliveToolStripMenuItem";
+            this.showCellsAliveToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showCellsAliveToolStripMenuItem.Text = "Show Cells Alive";
+            this.showCellsAliveToolStripMenuItem.Click += new System.EventHandler(this.showCellsAliveToolStripMenuItem_Click);
+            // 
             // modeToolStripMenuItem
             // 
             this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -275,29 +306,11 @@
             this.toolStripStatusLabelGenerations.Size = new System.Drawing.Size(90, 17);
             this.toolStripStatusLabelGenerations.Text = "Generations = 0";
             // 
-            // viewToolStripMenuItem
+            // cellsAliveStatusLabel
             // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showGridToolStripMenuItem,
-            this.showNeighborCountToolStripMenuItem,
-            this.showCellsAliveToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.viewToolStripMenuItem.Text = "View";
-            // 
-            // showGridToolStripMenuItem
-            // 
-            this.showGridToolStripMenuItem.Name = "showGridToolStripMenuItem";
-            this.showGridToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.showGridToolStripMenuItem.Text = "Show Grid";
-            this.showGridToolStripMenuItem.Click += new System.EventHandler(this.showGridToolStripMenuItem_Click);
-            // 
-            // showNeighborCountToolStripMenuItem
-            // 
-            this.showNeighborCountToolStripMenuItem.Name = "showNeighborCountToolStripMenuItem";
-            this.showNeighborCountToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.showNeighborCountToolStripMenuItem.Text = "Show Neighbor Count";
-            this.showNeighborCountToolStripMenuItem.Click += new System.EventHandler(this.showNeighborCountToolStripMenuItem_Click);
+            this.cellsAliveStatusLabel.Name = "cellsAliveStatusLabel";
+            this.cellsAliveStatusLabel.Size = new System.Drawing.Size(81, 17);
+            this.cellsAliveStatusLabel.Text = "Cells Alive = 0";
             // 
             // graphicsPanel
             // 
@@ -309,19 +322,6 @@
             this.graphicsPanel.TabIndex = 3;
             this.graphicsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel_Paint);
             this.graphicsPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseClick);
-            // 
-            // cellsAliveStatusLabel
-            // 
-            this.cellsAliveStatusLabel.Name = "cellsAliveStatusLabel";
-            this.cellsAliveStatusLabel.Size = new System.Drawing.Size(81, 17);
-            this.cellsAliveStatusLabel.Text = "Cells Alive = 0";
-            // 
-            // showCellsAliveToolStripMenuItem
-            // 
-            this.showCellsAliveToolStripMenuItem.Name = "showCellsAliveToolStripMenuItem";
-            this.showCellsAliveToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.showCellsAliveToolStripMenuItem.Text = "Show Cells Alive";
-            this.showCellsAliveToolStripMenuItem.Click += new System.EventHandler(this.showCellsAliveToolStripMenuItem_Click);
             // 
             // GameofLifeForm
             // 
@@ -335,6 +335,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "GameofLifeForm";
             this.Text = "Game of Life";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameofLifeForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);

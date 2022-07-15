@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameOfLife.Data;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using static GameOfLife.Utilities.Utilities;
@@ -20,11 +21,7 @@ namespace GameOfLife.Forms
         // Generation count
         private int generations = 0;
 
-        private bool DrawGrid = true;
-
-        private bool ShowNeighbors = true;
-
-        private bool ShowCellsAlive = true;
+        private Settings AppSettings;
 
         public GameofLifeForm()
         {
@@ -35,10 +32,12 @@ namespace GameOfLife.Forms
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
 
-            showGridToolStripMenuItem.Checked = DrawGrid;
-            showNeighborCountToolStripMenuItem.Checked = ShowNeighbors;
-            showCellsAliveToolStripMenuItem.Checked = ShowCellsAlive;
-            cellsAliveStatusLabel.Visible = ShowCellsAlive;
+            LoadSettings(out AppSettings);
+
+            showGridToolStripMenuItem.Checked = AppSettings.DrawGrid;
+            showNeighborCountToolStripMenuItem.Checked = AppSettings.ShowNeighbors;
+            showCellsAliveToolStripMenuItem.Checked = AppSettings.ShowCellsAlive;
+            cellsAliveStatusLabel.Visible = AppSettings.ShowCellsAlive;
 
             randomizeToolStripMenuItem.PerformClick();
         }
@@ -46,7 +45,7 @@ namespace GameOfLife.Forms
         // The event called by the timer every Interval milliseconds.
         private void Timer_Tick(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe);
+            universe = NextGeneration(universe, AppSettings.Toroidal);
 
             // Increment generation count
             generations++;
@@ -89,7 +88,7 @@ namespace GameOfLife.Forms
                     {
                         e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
-                    if(ShowNeighbors)
+                    if(AppSettings.ShowNeighbors)
                     {
                         var font = new Font("Arial", 10f);
 
@@ -104,7 +103,7 @@ namespace GameOfLife.Forms
                             new SolidBrush(Color.Green)
                             : new SolidBrush(Color.Red);
 
-                        var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+                        var neighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
                         e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
 
@@ -114,14 +113,14 @@ namespace GameOfLife.Forms
                     }
 
                     // Outline the cell with a pen
-                    if(DrawGrid)
+                    if(AppSettings.DrawGrid)
                     {
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
                     }
                 }
             }
 
-            if(ShowCellsAlive)
+            if(AppSettings.ShowCellsAlive)
             {
                 UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
             }
@@ -166,7 +165,7 @@ namespace GameOfLife.Forms
 
         private void nextGenerationButton_Click(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe);
+            universe = NextGeneration(universe, AppSettings.Toroidal);
 
             // Increment generation count
             generations++;
@@ -194,7 +193,7 @@ namespace GameOfLife.Forms
             generations = 0;
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
 
-            if(ShowCellsAlive)
+            if(AppSettings.ShowCellsAlive)
             {
                 cellsAliveStatusLabel.Text = "Cells Alive = 0";
             }
@@ -220,7 +219,7 @@ namespace GameOfLife.Forms
             generations = 0;
             UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
 
-            if(ShowCellsAlive)
+            if(AppSettings.ShowCellsAlive)
             {
                 UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
             }
@@ -271,12 +270,12 @@ namespace GameOfLife.Forms
         {
             if(!toroidalToolStripMenuItem.Checked)
             {
-                Toroidal = true;
+                AppSettings.Toroidal = true;
                 toroidalToolStripMenuItem.Checked = true;
             }
             else
             {
-                Toroidal = false;
+                AppSettings.Toroidal = false;
                 toroidalToolStripMenuItem.Checked = false;
             }
             graphicsPanel.Invalidate();
@@ -304,12 +303,12 @@ namespace GameOfLife.Forms
             if(showGridToolStripMenuItem.Checked)
             {
                 showGridToolStripMenuItem.Checked = false;
-                DrawGrid = false;
+                AppSettings.DrawGrid = false;
             }
             else
             {
                 showGridToolStripMenuItem.Checked = true;
-                DrawGrid = true;
+                AppSettings.DrawGrid = true;
             }
 
             graphicsPanel.Invalidate();
@@ -320,12 +319,12 @@ namespace GameOfLife.Forms
             if(showNeighborCountToolStripMenuItem.Checked)
             {
                 showNeighborCountToolStripMenuItem.Checked = false;
-                ShowNeighbors = false;
+                AppSettings.ShowNeighbors = false;
             }
             else
             {
                 showNeighborCountToolStripMenuItem.Checked = true;
-                ShowNeighbors = true;
+                AppSettings.ShowNeighbors = true;
             }
 
             graphicsPanel.Invalidate();
@@ -336,16 +335,21 @@ namespace GameOfLife.Forms
             if(showCellsAliveToolStripMenuItem.Checked)
             {
                 showCellsAliveToolStripMenuItem.Checked = false;
-                ShowCellsAlive = false;
+                AppSettings.ShowCellsAlive = false;
             }
             else
             {
                 showCellsAliveToolStripMenuItem.Checked = true;
-                ShowCellsAlive = true;
+                AppSettings.ShowCellsAlive = true;
             }
 
-            cellsAliveStatusLabel.Visible = ShowCellsAlive;
+            cellsAliveStatusLabel.Visible = AppSettings.ShowCellsAlive;
             graphicsPanel.Invalidate();
+        }
+
+        private void GameofLifeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveSettings(AppSettings);
         }
     }
 }

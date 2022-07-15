@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GameOfLife.Data;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -69,8 +70,6 @@ namespace GameOfLife.Utilities
             }
         }
 
-        public static bool Toroidal = false;
-
         private static bool[,] ProcessFileContents(List<string> fileContents)
         {
             var height = 0;
@@ -104,7 +103,7 @@ namespace GameOfLife.Utilities
         }
 
         // Calculate the next generation of cells
-        public static bool[,] NextGeneration(bool[,] universe)
+        public static bool[,] NextGeneration(bool[,] universe, bool toroidal)
         {
             var scratchpad = (bool[,])universe.Clone();
             for(var y = 0; y < universe.GetLength(1); ++y)
@@ -113,7 +112,7 @@ namespace GameOfLife.Utilities
                 {
                     var cell = universe[x, y];
 
-                    var neighbors = Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+                    var neighbors = toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
                     if(cell && neighbors < 2)
                     {
@@ -243,6 +242,31 @@ namespace GameOfLife.Utilities
             }
 
             toolStripStatusLabelCellsAlive.Text = $"Cells Alive = {count}";
+        }
+
+        public static void LoadSettings(out Settings settings)
+        {
+            settings = new Settings
+            {
+                DrawGrid = Properties.Settings.Default.DrawGrid,
+                ShowCellsAlive = Properties.Settings.Default.ShowCellsAlive,
+                CellColor = Properties.Settings.Default.CellColor,
+                GridColor = Properties.Settings.Default.CellColor,
+                ShowNeighbors = Properties.Settings.Default.ShowNeighbors,
+                Toroidal = Properties.Settings.Default.Toroidal
+            };
+        }
+
+        public static void SaveSettings(Settings settings)
+        {
+            Properties.Settings.Default.DrawGrid = settings.DrawGrid;
+            Properties.Settings.Default.ShowCellsAlive = settings.ShowCellsAlive;
+            Properties.Settings.Default.GridColor = settings.GridColor;
+            Properties.Settings.Default.CellColor = settings.CellColor;
+            Properties.Settings.Default.ShowNeighbors = settings.ShowNeighbors;
+            Properties.Settings.Default.Toroidal = settings.Toroidal;
+
+            Properties.Settings.Default.Save();
         }
     }
 }
