@@ -9,7 +9,7 @@ namespace GameOfLife.Forms
     public partial class GameofLifeForm : Form
     {
         // The universe array
-        private bool[,] universe = new bool[50, 50];
+        private bool[,] universe;
 
         // Drawing colors
         private readonly Color gridColor = Color.Black;
@@ -21,7 +21,6 @@ namespace GameOfLife.Forms
         // Generation count
         private int generations = 0;
 
-        private Settings AppSettings;
 
         public GameofLifeForm()
         {
@@ -32,7 +31,9 @@ namespace GameOfLife.Forms
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
 
-            LoadSettings(out AppSettings);
+            LoadSettings();
+
+            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
             showGridToolStripMenuItem.Checked = AppSettings.DrawGrid;
             showNeighborCountToolStripMenuItem.Checked = AppSettings.ShowNeighbors;
@@ -45,7 +46,7 @@ namespace GameOfLife.Forms
         // The event called by the timer every Interval milliseconds.
         private void Timer_Tick(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe, AppSettings.Toroidal);
+            universe = NextGeneration(universe);
 
             // Increment generation count
             generations++;
@@ -165,7 +166,7 @@ namespace GameOfLife.Forms
 
         private void nextGenerationButton_Click(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe, AppSettings.Toroidal);
+            universe = NextGeneration(universe);
 
             // Increment generation count
             generations++;
@@ -180,7 +181,7 @@ namespace GameOfLife.Forms
         {
             timer.Enabled = false;
 
-            universe = new bool[50, 50];
+            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
             for(var y = 0; y < universe.GetLength(1); ++y)
             {
@@ -206,7 +207,7 @@ namespace GameOfLife.Forms
             var rand = new Random();
             timer.Enabled = false;
 
-            universe = new bool[50, 50];
+            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
             for(var y = 0; y < universe.GetLength(1); ++y)
             {
@@ -254,7 +255,11 @@ namespace GameOfLife.Forms
                 if(dialog.ShowDialog() == DialogResult.OK)
                 {
                     timer.Enabled = false;
-                    universe = new bool[dialog.UniverseWidth, dialog.UniverseHeight];
+
+                    AppSettings.UniverseWidth = dialog.UniverseWidth;
+                    AppSettings.UniverseHeight = dialog.UniverseHeight;
+
+                    universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
                     generations = 0;
                     UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);
@@ -349,7 +354,7 @@ namespace GameOfLife.Forms
 
         private void GameofLifeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveSettings(AppSettings);
+            SaveSettings();
         }
     }
 }

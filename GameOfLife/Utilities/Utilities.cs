@@ -7,6 +7,8 @@ namespace GameOfLife.Utilities
 {
     internal static class Utilities
     {
+        public static Settings AppSettings;
+
         public static bool[,] ReadCellsFile()
         {
             // Open file fialog box
@@ -103,7 +105,7 @@ namespace GameOfLife.Utilities
         }
 
         // Calculate the next generation of cells
-        public static bool[,] NextGeneration(bool[,] universe, bool toroidal)
+        public static bool[,] NextGeneration(bool[,] universe)
         {
             var scratchpad = (bool[,])universe.Clone();
             for(var y = 0; y < universe.GetLength(1); ++y)
@@ -112,7 +114,7 @@ namespace GameOfLife.Utilities
                 {
                     var cell = universe[x, y];
 
-                    var neighbors = toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+                    var neighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
                     if(cell && neighbors < 2)
                     {
@@ -244,27 +246,31 @@ namespace GameOfLife.Utilities
             toolStripStatusLabelCellsAlive.Text = $"Cells Alive = {count}";
         }
 
-        public static void LoadSettings(out Settings settings)
+        public static void LoadSettings()
         {
-            settings = new Settings
+            AppSettings = new Settings
             {
                 DrawGrid = Properties.Settings.Default.DrawGrid,
                 ShowCellsAlive = Properties.Settings.Default.ShowCellsAlive,
                 CellColor = Properties.Settings.Default.CellColor,
                 GridColor = Properties.Settings.Default.CellColor,
                 ShowNeighbors = Properties.Settings.Default.ShowNeighbors,
-                Toroidal = Properties.Settings.Default.Toroidal
+                Toroidal = Properties.Settings.Default.Toroidal,
+                UniverseHeight = Properties.Settings.Default.UniverseHeight,
+                UniverseWidth = Properties.Settings.Default.UniverseWidth
             };
         }
 
-        public static void SaveSettings(Settings settings)
+        public static void SaveSettings()
         {
-            Properties.Settings.Default.DrawGrid = settings.DrawGrid;
-            Properties.Settings.Default.ShowCellsAlive = settings.ShowCellsAlive;
-            Properties.Settings.Default.GridColor = settings.GridColor;
-            Properties.Settings.Default.CellColor = settings.CellColor;
-            Properties.Settings.Default.ShowNeighbors = settings.ShowNeighbors;
-            Properties.Settings.Default.Toroidal = settings.Toroidal;
+            Properties.Settings.Default.DrawGrid = AppSettings.DrawGrid;
+            Properties.Settings.Default.ShowCellsAlive = AppSettings.ShowCellsAlive;
+            Properties.Settings.Default.GridColor = AppSettings.GridColor;
+            Properties.Settings.Default.CellColor = AppSettings.CellColor;
+            Properties.Settings.Default.ShowNeighbors = AppSettings.ShowNeighbors;
+            Properties.Settings.Default.Toroidal = AppSettings.Toroidal;
+            Properties.Settings.Default.UniverseHeight = AppSettings.UniverseHeight;
+            Properties.Settings.Default.UniverseWidth = AppSettings.UniverseWidth;
 
             Properties.Settings.Default.Save();
         }
