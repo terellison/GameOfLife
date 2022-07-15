@@ -253,7 +253,7 @@ namespace GameOfLife.Utilities
                 DrawGrid = Properties.Settings.Default.DrawGrid,
                 ShowCellsAlive = Properties.Settings.Default.ShowCellsAlive,
                 CellColor = Properties.Settings.Default.CellColor,
-                GridColor = Properties.Settings.Default.CellColor,
+                GridColor = Properties.Settings.Default.GridColor,
                 ShowNeighbors = Properties.Settings.Default.ShowNeighbors,
                 Toroidal = Properties.Settings.Default.Toroidal,
                 UniverseHeight = Properties.Settings.Default.UniverseHeight,

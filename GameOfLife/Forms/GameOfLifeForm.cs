@@ -11,10 +11,6 @@ namespace GameOfLife.Forms
         // The universe array
         private bool[,] universe;
 
-        // Drawing colors
-        private readonly Color gridColor = Color.Black;
-        private readonly Color cellColor = Color.Gray;
-
         // The Timer class
         private readonly Timer timer = new Timer();
 
@@ -66,10 +62,10 @@ namespace GameOfLife.Forms
             var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
 
             // A Pen for drawing the grid lines (color, width)
-            var gridPen = new Pen(gridColor, 1);
+            var gridPen = new Pen(AppSettings.GridColor, 1);
 
             // A Brush for filling living cells interiors (color)
-            Brush cellBrush = new SolidBrush(cellColor);
+            Brush cellBrush = new SolidBrush(AppSettings.CellColor);
 
             // Iterate through the universe in the y, top to bottom
             for(var y = 0; y < universe.GetLength(1); y++)
@@ -355,6 +351,30 @@ namespace GameOfLife.Forms
         private void GameofLifeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
+        }
+
+        private void changeGridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using(var dialog = new ColorDialog())
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    AppSettings.GridColor = dialog.Color;
+                    graphicsPanel.Invalidate();
+                }
+            }
+        }
+
+        private void changeCellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using(var dialog = new ColorDialog())
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    AppSettings.CellColor = dialog.Color;
+                    graphicsPanel.Invalidate();
+                }
+            }
         }
     }
 }

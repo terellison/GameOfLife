@@ -42,6 +42,7 @@
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resizeUniverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.changeGenerationLengthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeGridColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showNeighborCountToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +59,7 @@
             this.toolStripStatusLabelGenerations = new System.Windows.Forms.ToolStripStatusLabel();
             this.cellsAliveStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.graphicsPanel = new GameOfLife.Forms.GraphicsPanel();
+            this.changeCellColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -155,9 +157,11 @@
             // 
             this.customizeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.resizeUniverseToolStripMenuItem,
-            this.changeGenerationLengthToolStripMenuItem});
+            this.changeGenerationLengthToolStripMenuItem,
+            this.changeGridColorToolStripMenuItem,
+            this.changeCellColorToolStripMenuItem});
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Customize";
             // 
             // resizeUniverseToolStripMenuItem
@@ -173,6 +177,13 @@
             this.changeGenerationLengthToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.changeGenerationLengthToolStripMenuItem.Text = "Change Generation Length";
             this.changeGenerationLengthToolStripMenuItem.Click += new System.EventHandler(this.changeGenerationLengthToolStripMenuItem_Click);
+            // 
+            // changeGridColorToolStripMenuItem
+            // 
+            this.changeGridColorToolStripMenuItem.Name = "changeGridColorToolStripMenuItem";
+            this.changeGridColorToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.changeGridColorToolStripMenuItem.Text = "Change Grid Color";
+            this.changeGridColorToolStripMenuItem.Click += new System.EventHandler(this.changeGridColorToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -323,6 +334,13 @@
             this.graphicsPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.graphicsPanel_Paint);
             this.graphicsPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graphicsPanel_MouseClick);
             // 
+            // changeCellColorToolStripMenuItem
+            // 
+            this.changeCellColorToolStripMenuItem.Name = "changeCellColorToolStripMenuItem";
+            this.changeCellColorToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.changeCellColorToolStripMenuItem.Text = "Change Cell Color";
+            this.changeCellColorToolStripMenuItem.Click += new System.EventHandler(this.changeCellColorToolStripMenuItem_Click);
+            // 
             // GameofLifeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -378,6 +396,8 @@
         private System.Windows.Forms.ToolStripMenuItem showNeighborCountToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel cellsAliveStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem showCellsAliveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeGridColorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeCellColorToolStripMenuItem;
     }
 }
 
