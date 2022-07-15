@@ -257,7 +257,8 @@ namespace GameOfLife.Utilities
                 ShowNeighbors = Properties.Settings.Default.ShowNeighbors,
                 Toroidal = Properties.Settings.Default.Toroidal,
                 UniverseHeight = Properties.Settings.Default.UniverseHeight,
-                UniverseWidth = Properties.Settings.Default.UniverseWidth
+                UniverseWidth = Properties.Settings.Default.UniverseWidth,
+                GenerationLength = Properties.Settings.Default.GenerationLength
             };
         }
 
@@ -271,6 +272,7 @@ namespace GameOfLife.Utilities
             Properties.Settings.Default.Toroidal = AppSettings.Toroidal;
             Properties.Settings.Default.UniverseHeight = AppSettings.UniverseHeight;
             Properties.Settings.Default.UniverseWidth = AppSettings.UniverseWidth;
+            Properties.Settings.Default.GenerationLength = AppSettings.GenerationLength;
 
             Properties.Settings.Default.Save();
         }

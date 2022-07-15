@@ -22,12 +22,12 @@ namespace GameOfLife.Forms
         {
             InitializeComponent();
 
+            LoadSettings();
+
             // Setup the timer
-            timer.Interval = 100; // milliseconds
+            timer.Interval = AppSettings.GenerationLength; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
-
-            LoadSettings();
 
             universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
@@ -293,6 +293,7 @@ namespace GameOfLife.Forms
             {
                 if(dialog.ShowDialog() == DialogResult.OK)
                 {
+                    AppSettings.GenerationLength = dialog.GenerationLength;
                     timer.Interval = dialog.GenerationLength;
                 }
             }

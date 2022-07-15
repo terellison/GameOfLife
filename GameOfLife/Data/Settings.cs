@@ -12,5 +12,6 @@ namespace GameOfLife.Data
         public bool Toroidal;
         public int UniverseWidth;
         public int UniverseHeight;
+        public int GenerationLength;
     }
 }
