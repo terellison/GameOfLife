@@ -64,9 +64,9 @@ namespace GameOfLife.Utilities
 
                     for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                     {
-                        line += universe.First(c => c.location.X == x
-                        && c.location.Y == y)
-                            .isAlive ? 'O' : '.';
+                        line += universe.First(c => c.X == x
+                        && c.Y == y)
+                            .IsAlive ? 'O' : '.';
                     }
 
                     writer.WriteLine(line);
@@ -102,9 +102,10 @@ namespace GameOfLife.Utilities
                 {
                     data.Add(new Cell
                     {
-                        isAlive = line[x] != '.',
-                        aliveNeighbors = 0,
-                        location = new Point(x, y)
+                        IsAlive = line[x] != '.',
+                        AliveNeighbors = 0,
+                        X = x,
+                        Y = y
                     });
                 }
             }
@@ -120,37 +121,37 @@ namespace GameOfLife.Utilities
             {
                 for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
-                    var cell = scratchpad.First(c => c.location.X == x && c.location.Y == y);
+                    var cell = scratchpad.First(c => c.X == x && c.Y == y);
                     var changed = false;
 
                     var neighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
-                    if(cell.isAlive && neighbors < 2)
+                    if(cell.IsAlive && neighbors < 2)
                     {
-                        cell.isAlive = false;
+                        cell.IsAlive = false;
                         changed = true;
                     }
 
-                    else if(cell.isAlive && neighbors > 3)
+                    else if(cell.IsAlive && neighbors > 3)
                     {
-                        cell.isAlive = false;
+                        cell.IsAlive = false;
                         changed = true;
                     }
 
-                    else if(cell.isAlive && (neighbors == 2 || neighbors == 3))
+                    else if(cell.IsAlive && (neighbors == 2 || neighbors == 3))
                     {
                         continue;
                     }
 
-                    else if(cell.isAlive == false && neighbors == 3)
+                    else if(cell.IsAlive == false && neighbors == 3)
                     {
-                        cell.isAlive = true;
+                        cell.IsAlive = true;
                         changed = true;
                     }
 
                     if(changed)
                     {
-                        scratchpad.RemoveWhere(c => c.location.X == x && c.location.Y == y);
+                        scratchpad.RemoveWhere(c => c.X == x && c.Y == y);
                         scratchpad.Add(cell);
                     }
                 }
@@ -183,7 +184,7 @@ namespace GameOfLife.Utilities
 
                     else if(xCheck == x && yCheck == y) { continue; }
 
-                    else if(universe.First(c => c.location.X == xCheck && c.location.Y == yCheck).isAlive)
+                    else if(universe.First(c => c.X == xCheck && c.Y == yCheck).IsAlive)
                     {
                         count++;
                     }
@@ -231,7 +232,7 @@ namespace GameOfLife.Utilities
                             yCheck = 0;
                         }
 
-                        if(universe.First(c => c.location.X == xCheck && c.location.Y == yCheck).isAlive)
+                        if(universe.First(c => c.X == xCheck && c.Y == yCheck).IsAlive)
                         {
                             ++count;
                         }

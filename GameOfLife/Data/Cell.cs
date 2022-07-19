@@ -2,8 +2,9 @@
 {
     internal struct Cell
     {
-        public bool isAlive;
-        public Point location;
-        public int aliveNeighbors;
+        public int X;
+        public int Y;
+        public int AliveNeighbors;
+        public bool IsAlive;
     }
 }

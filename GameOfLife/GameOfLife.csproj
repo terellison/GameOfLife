@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Cell.cs" />
-    <Compile Include="Data\Point.cs" />
     <Compile Include="Data\Settings.cs" />
     <Compile Include="Forms\ChangeGenerationLengthDialog.cs">
       <SubType>Form</SubType>

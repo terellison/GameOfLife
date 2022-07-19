@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using static GameOfLife.Utilities.Utilities;
-using Point = GameOfLife.Data.Point;
 
 namespace GameOfLife.Forms
 {
@@ -73,8 +72,8 @@ namespace GameOfLife.Forms
             // Iterate through the universe in the y, top to bottom
             universe.ToList().ForEach((Cell cell) =>
             {
-                var x = cell.location.X;
-                var y = cell.location.Y;
+                var x = cell.X;
+                var y = cell.Y;
                 // A rectangle to represent each cell in pixels
                 RectangleF cellRect = Rectangle.Empty;
                 cellRect.X = x * cellWidth;
@@ -83,7 +82,7 @@ namespace GameOfLife.Forms
                 cellRect.Height = cellHeight;
 
                 // Fill the cell with a brush if alive
-                if(cell.isAlive)
+                if(cell.IsAlive)
                 {
                     e.Graphics.FillRectangle(cellBrush, cellRect);
                 }
@@ -98,13 +97,13 @@ namespace GameOfLife.Forms
                     };
 
                     var neighborBrush =
-                        cell.isAlive ?
+                        cell.IsAlive ?
                         new SolidBrush(Color.Green)
                         : new SolidBrush(Color.Red);
 
-                    cell.aliveNeighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+                    cell.AliveNeighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
-                    e.Graphics.DrawString(cell.aliveNeighbors.ToString(), font, neighborBrush, cellRect, format);
+                    e.Graphics.DrawString(cell.AliveNeighbors.ToString(), font, neighborBrush, cellRect, format);
 
                     neighborBrush.Dispose();
                     font.Dispose();
@@ -120,7 +119,7 @@ namespace GameOfLife.Forms
 
             if(AppSettings.ShowCellsAlive)
             {
-                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.isAlive).Count());
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.IsAlive).Count());
             }
 
             // Cleaning up pens and brushes
@@ -144,10 +143,10 @@ namespace GameOfLife.Forms
                 var y = (int)(e.Y / cellHeight);
 
                 // Toggle the cell's state
-                var cell = universe.First(c => c.location.X == x && c.location.Y == y);
-                universe.RemoveWhere(c => c.location.X == x && c.location.Y == y);
+                var cell = universe.First(c => c.X == x && c.Y == y);
+                universe.RemoveWhere(c => c.X == x && c.Y == y);
 
-                cell.isAlive = !cell.isAlive;
+                cell.IsAlive = !cell.IsAlive;
 
                 universe.Add(cell);
 
@@ -189,7 +188,7 @@ namespace GameOfLife.Forms
             {
                 for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
-                    universe.Add(new Cell { isAlive = false, location = new Point(x, y), aliveNeighbors = 0 });
+                    universe.Add(new Cell { IsAlive = false, X = x, Y = y, AliveNeighbors = 0 });
                 }
             }
 
@@ -218,8 +217,8 @@ namespace GameOfLife.Forms
                     universe.Add(
                         new Cell
                         {
-                            location = new Point(x, y),
-                            isAlive = Convert.ToBoolean(rand.Next(0, 2))
+                            X = x, Y = y,
+                            IsAlive = Convert.ToBoolean(rand.Next(0, 2))
                         });
                 }
             }
@@ -229,7 +228,7 @@ namespace GameOfLife.Forms
 
             if(AppSettings.ShowCellsAlive)
             {
-                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.isAlive == true).Count());
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.IsAlive == true).Count());
             }
 
 
@@ -274,9 +273,10 @@ namespace GameOfLife.Forms
                         {
                             universe.Add(new Cell
                             {
-                                isAlive = false,
-                                aliveNeighbors = 0,
-                                location = new Point(x, y)
+                                IsAlive = false,
+                                AliveNeighbors = 0,
+                                X = x,
+                                Y = y
                             });
                         }
                     }
