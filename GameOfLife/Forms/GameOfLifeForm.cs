@@ -1,14 +1,18 @@
-﻿using System;
+﻿using GameOfLife.Data;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using static GameOfLife.Utilities.Utilities;
+using Point = GameOfLife.Data.Point;
 
 namespace GameOfLife.Forms
 {
     public partial class GameofLifeForm : Form
     {
         // The universe array
-        private bool[,] universe;
+        private HashSet<Cell> universe;
 
         // The Timer class
         private readonly Timer timer = new Timer();
@@ -28,7 +32,7 @@ namespace GameOfLife.Forms
             timer.Tick += Timer_Tick;
             timer.Enabled = false;
 
-            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
+            universe = new HashSet<Cell>();
 
             showGridToolStripMenuItem.Checked = AppSettings.DrawGrid;
             showNeighborCountToolStripMenuItem.Checked = AppSettings.ShowNeighbors;
@@ -41,7 +45,7 @@ namespace GameOfLife.Forms
         // The event called by the timer every Interval milliseconds.
         private void Timer_Tick(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe);
+            universe = new HashSet<Cell>(NextGeneration(universe));
 
             // Increment generation count
             generations++;
@@ -56,9 +60,9 @@ namespace GameOfLife.Forms
         {
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
-            var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
+            var cellWidth = (float)graphicsPanel.ClientSize.Width / AppSettings.UniverseWidth;
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
-            var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
+            var cellHeight = (float)graphicsPanel.ClientSize.Height / AppSettings.UniverseHeight;
 
             // A Pen for drawing the grid lines (color, width)
             var gridPen = new Pen(AppSettings.GridColor, 1);
@@ -67,58 +71,56 @@ namespace GameOfLife.Forms
             Brush cellBrush = new SolidBrush(AppSettings.CellColor);
 
             // Iterate through the universe in the y, top to bottom
-            for(var y = 0; y < universe.GetLength(1); y++)
+            universe.ToList().ForEach((Cell cell) =>
             {
-                // Iterate through the universe in the x, left to right
-                for(var x = 0; x < universe.GetLength(0); x++)
+                var x = cell.location.X;
+                var y = cell.location.Y;
+                // A rectangle to represent each cell in pixels
+                RectangleF cellRect = Rectangle.Empty;
+                cellRect.X = x * cellWidth;
+                cellRect.Y = y * cellHeight;
+                cellRect.Width = cellWidth;
+                cellRect.Height = cellHeight;
+
+                // Fill the cell with a brush if alive
+                if(cell.isAlive)
                 {
-                    // A rectangle to represent each cell in pixels
-                    RectangleF cellRect = Rectangle.Empty;
-                    cellRect.X = x * cellWidth;
-                    cellRect.Y = y * cellHeight;
-                    cellRect.Width = cellWidth;
-                    cellRect.Height = cellHeight;
-
-                    // Fill the cell with a brush if alive
-                    if(universe[x, y] == true)
-                    {
-                        e.Graphics.FillRectangle(cellBrush, cellRect);
-                    }
-                    if(AppSettings.ShowNeighbors)
-                    {
-                        var font = new Font("Arial", 10f);
-
-                        var format = new StringFormat
-                        {
-                            Alignment = StringAlignment.Center,
-                            LineAlignment = StringAlignment.Center
-                        };
-
-                        var neighborBrush =
-                            universe[x, y] ?
-                            new SolidBrush(Color.Green)
-                            : new SolidBrush(Color.Red);
-
-                        var neighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
-
-                        e.Graphics.DrawString(neighbors.ToString(), font, neighborBrush, cellRect, format);
-
-                        neighborBrush.Dispose();
-                        font.Dispose();
-                        format.Dispose();
-                    }
-
-                    // Outline the cell with a pen
-                    if(AppSettings.DrawGrid)
-                    {
-                        e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
-                    }
+                    e.Graphics.FillRectangle(cellBrush, cellRect);
                 }
-            }
+                if(AppSettings.ShowNeighbors)
+                {
+                    var font = new Font("Arial", 10f);
+
+                    var format = new StringFormat
+                    {
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
+                    };
+
+                    var neighborBrush =
+                        cell.isAlive ?
+                        new SolidBrush(Color.Green)
+                        : new SolidBrush(Color.Red);
+
+                    cell.aliveNeighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
+
+                    e.Graphics.DrawString(cell.aliveNeighbors.ToString(), font, neighborBrush, cellRect, format);
+
+                    neighborBrush.Dispose();
+                    font.Dispose();
+                    format.Dispose();
+                }
+
+                // Outline the cell with a pen
+                if(AppSettings.DrawGrid)
+                {
+                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                }
+            });
 
             if(AppSettings.ShowCellsAlive)
             {
-                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.isAlive).Count());
             }
 
             // Cleaning up pens and brushes
@@ -132,8 +134,8 @@ namespace GameOfLife.Forms
             if(e.Button == MouseButtons.Left)
             {
                 // Calculate the width and height of each cell in pixels
-                var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
-                var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
+                var cellWidth = (float)graphicsPanel.ClientSize.Width / AppSettings.UniverseWidth;
+                var cellHeight = (float)graphicsPanel.ClientSize.Height / AppSettings.UniverseHeight;
 
                 // Calculate the cell that was clicked in
                 // CELL X = MOUSE X / CELL WIDTH
@@ -142,7 +144,12 @@ namespace GameOfLife.Forms
                 var y = (int)(e.Y / cellHeight);
 
                 // Toggle the cell's state
-                universe[x, y] = !universe[x, y];
+                var cell = universe.First(c => c.location.X == x && c.location.Y == y);
+                universe.RemoveWhere(c => c.location.X == x && c.location.Y == y);
+
+                cell.isAlive = !cell.isAlive;
+
+                universe.Add(cell);
 
                 // Tell Windows you need to repaint
                 graphicsPanel.Invalidate();
@@ -161,7 +168,7 @@ namespace GameOfLife.Forms
 
         private void nextGenerationButton_Click(object sender, EventArgs e)
         {
-            universe = NextGeneration(universe);
+            universe = new HashSet<Cell>(NextGeneration(universe));
 
             // Increment generation count
             generations++;
@@ -176,13 +183,13 @@ namespace GameOfLife.Forms
         {
             timer.Enabled = false;
 
-            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
+            universe = new HashSet<Cell>();
 
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
-                    universe[x, y] = false;
+                    universe.Add(new Cell { isAlive = false, location = new Point(x, y), aliveNeighbors = 0 });
                 }
             }
 
@@ -202,13 +209,18 @@ namespace GameOfLife.Forms
             var rand = new Random();
             timer.Enabled = false;
 
-            universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
+            universe = new HashSet<Cell>();
 
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
-                    universe[x, y] = Convert.ToBoolean(rand.Next(0, 2));
+                    universe.Add(
+                        new Cell
+                        {
+                            location = new Point(x, y),
+                            isAlive = Convert.ToBoolean(rand.Next(0, 2))
+                        });
                 }
             }
 
@@ -217,7 +229,7 @@ namespace GameOfLife.Forms
 
             if(AppSettings.ShowCellsAlive)
             {
-                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe);
+                UpdateCellsAliveLabel(cellsAliveStatusLabel, universe.Where(x => x.isAlive == true).Count());
             }
 
 
@@ -243,8 +255,8 @@ namespace GameOfLife.Forms
         {
             using(var dialog = new ResizeUniverseDialog
             {
-                UniverseWidth = universe.GetLength(0),
-                UniverseHeight = universe.GetLength(1)
+                UniverseWidth = AppSettings.UniverseWidth,
+                UniverseHeight = AppSettings.UniverseHeight
             })
             {
                 if(dialog.ShowDialog() == DialogResult.OK)
@@ -254,7 +266,20 @@ namespace GameOfLife.Forms
                     AppSettings.UniverseWidth = dialog.UniverseWidth;
                     AppSettings.UniverseHeight = dialog.UniverseHeight;
 
-                    universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
+                    universe = new HashSet<Cell>();
+
+                    for(var y = 0; y < AppSettings.UniverseHeight; ++y)
+                    {
+                        for(var x = 0; x < AppSettings.UniverseWidth; ++x)
+                        {
+                            universe.Add(new Cell
+                            {
+                                isAlive = false,
+                                aliveNeighbors = 0,
+                                location = new Point(x, y)
+                            });
+                        }
+                    }
 
                     generations = 0;
                     UpdateGenerationLabel(toolStripStatusLabelGenerations, ref generations);

@@ -1,6 +1,7 @@
 ﻿using GameOfLife.Data;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace GameOfLife.Utilities
@@ -9,7 +10,7 @@ namespace GameOfLife.Utilities
     {
         public static Settings AppSettings;
 
-        public static bool[,] ReadCellsFile()
+        public static HashSet<Cell> ReadCellsFile()
         {
             // Open file fialog box
             var fileContents = new List<string>();
@@ -44,7 +45,7 @@ namespace GameOfLife.Utilities
             return data;
         }
 
-        public static void Save(bool[,] universe)
+        public static void Save(HashSet<Cell> universe)
         {
             var dialog = new SaveFileDialog
             {
@@ -57,13 +58,15 @@ namespace GameOfLife.Utilities
             {
                 var writer = new StreamWriter(dialog.FileName);
 
-                for(var y = 0; y < universe.GetLength(1); ++y)
+                for(var y = 0; y < AppSettings.UniverseHeight; ++y)
                 {
                     var line = string.Empty;
 
-                    for(var x = 0; x < universe.GetLength(0); ++x)
+                    for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                     {
-                        line += universe[x, y] ? 'O' : '.';
+                        line += universe.First(c => c.location.X == x
+                        && c.location.Y == y)
+                            .isAlive ? 'O' : '.';
                     }
 
                     writer.WriteLine(line);
@@ -72,7 +75,7 @@ namespace GameOfLife.Utilities
             }
         }
 
-        private static bool[,] ProcessFileContents(List<string> fileContents)
+        private static HashSet<Cell> ProcessFileContents(List<string> fileContents)
         {
             var height = 0;
             var width = 0;
@@ -89,15 +92,20 @@ namespace GameOfLife.Utilities
                 }
             }
 
-            var data = new bool[width, height];
+            var data = new HashSet<Cell>();
 
-            for(var y = 0; y < data.GetLength(1); ++y)
+            for(var y = 0; y < height; ++y)
             {
                 var line = fileContents[y];
 
-                for(var x = 0; x < data.GetLength(0); ++x)
+                for(var x = 0; x < width; ++x)
                 {
-                    data[x, y] = line[x] != '.';
+                    data.Add(new Cell
+                    {
+                        isAlive = line[x] != '.',
+                        aliveNeighbors = 0,
+                        location = new Point(x, y)
+                    });
                 }
             }
 
@@ -105,47 +113,57 @@ namespace GameOfLife.Utilities
         }
 
         // Calculate the next generation of cells
-        public static bool[,] NextGeneration(bool[,] universe)
+        public static HashSet<Cell> NextGeneration(HashSet<Cell> universe)
         {
-            var scratchpad = (bool[,])universe.Clone();
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            var scratchpad = new HashSet<Cell>(universe);
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
-                    var cell = universe[x, y];
+                    var cell = scratchpad.First(c => c.location.X == x && c.location.Y == y);
+                    var changed = false;
 
                     var neighbors = AppSettings.Toroidal ? CountNeighborsToroidal(x, y, universe) : CountNeighbors(x, y, universe);
 
-                    if(cell && neighbors < 2)
+                    if(cell.isAlive && neighbors < 2)
                     {
-                        scratchpad[x, y] = false;
+                        cell.isAlive = false;
+                        changed = true;
                     }
 
-                    else if(cell && neighbors > 3)
+                    else if(cell.isAlive && neighbors > 3)
                     {
-                        scratchpad[x, y] = false;
+                        cell.isAlive = false;
+                        changed = true;
                     }
 
-                    else if(cell && (neighbors == 2 || neighbors == 3))
+                    else if(cell.isAlive && (neighbors == 2 || neighbors == 3))
                     {
                         continue;
                     }
 
-                    else if(cell == false && neighbors == 3)
+                    else if(cell.isAlive == false && neighbors == 3)
                     {
-                        scratchpad[x, y] = true;
+                        cell.isAlive = true;
+                        changed = true;
+                    }
+
+                    if(changed)
+                    {
+                        scratchpad.RemoveWhere(c => c.location.X == x && c.location.Y == y);
+                        scratchpad.Add(cell);
                     }
                 }
             }
-
+            
             return scratchpad;
         }
 
-        public static int CountNeighbors(int x, int y, bool[,] universe)
+        public static int CountNeighbors(int x, int y, HashSet<Cell> universe)
         {
             var count = 0;
-            var xLength = universe.GetLength(0);
-            var yLength = universe.GetLength(1);
+            var xLength = AppSettings.UniverseWidth;
+            var yLength = AppSettings.UniverseHeight;
 
             for(var yOffset = -1; yOffset <= 1; ++yOffset)
             {
@@ -165,7 +183,7 @@ namespace GameOfLife.Utilities
 
                     else if(xCheck == x && yCheck == y) { continue; }
 
-                    else if(universe[xCheck, yCheck] == true)
+                    else if(universe.First(c => c.location.X == xCheck && c.location.Y == yCheck).isAlive)
                     {
                         count++;
                     }
@@ -174,11 +192,11 @@ namespace GameOfLife.Utilities
             return count;
         }
 
-        public static int CountNeighborsToroidal(int x, int y, bool[,] universe)
+        public static int CountNeighborsToroidal(int x, int y, HashSet<Cell> universe)
         {
             var count = 0;
-            var xLength = universe.GetLength(0);
-            var yLength = universe.GetLength(1);
+            var xLength = AppSettings.UniverseWidth;
+            var yLength = AppSettings.UniverseHeight;
 
             for(var yOffset = -1; yOffset <= 1; ++yOffset)
             {
@@ -213,7 +231,7 @@ namespace GameOfLife.Utilities
                             yCheck = 0;
                         }
 
-                        if(universe[xCheck, yCheck] == true)
+                        if(universe.First(c => c.location.X == xCheck && c.location.Y == yCheck).isAlive)
                         {
                             ++count;
                         }
@@ -228,21 +246,8 @@ namespace GameOfLife.Utilities
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
         }
 
-        public static void UpdateCellsAliveLabel(ToolStripStatusLabel toolStripStatusLabelCellsAlive, bool[,] universe)
+        public static void UpdateCellsAliveLabel(ToolStripStatusLabel toolStripStatusLabelCellsAlive, int count)
         {
-            var count = 0;
-
-            for(var y = 0; y < universe.GetLength(1); ++y)
-            {
-                for(var x = 0; x < universe.GetLength(1); ++x)
-                {
-                    if(universe[x, y])
-                    {
-                        ++count;
-                    }
-                }
-            }
-
             toolStripStatusLabelCellsAlive.Text = $"Cells Alive = {count}";
         }
 
