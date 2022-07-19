@@ -57,11 +57,11 @@ namespace GameOfLife.Utilities
             {
                 var writer = new StreamWriter(dialog.FileName);
 
-                for(var y = 0; y < universe.GetLength(1); ++y)
+                for(var y = 0; y < AppSettings.UniverseHeight; ++y)
                 {
                     var line = string.Empty;
 
-                    for(var x = 0; x < universe.GetLength(0); ++x)
+                    for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                     {
                         line += universe[x, y] ? 'O' : '.';
                     }
@@ -108,9 +108,9 @@ namespace GameOfLife.Utilities
         public static bool[,] NextGeneration(bool[,] universe)
         {
             var scratchpad = (bool[,])universe.Clone();
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
                     var cell = universe[x, y];
 
@@ -144,8 +144,8 @@ namespace GameOfLife.Utilities
         public static int CountNeighbors(int x, int y, bool[,] universe)
         {
             var count = 0;
-            var xLength = universe.GetLength(0);
-            var yLength = universe.GetLength(1);
+            var xLength = AppSettings.UniverseWidth;
+            var yLength = AppSettings.UniverseHeight;
 
             for(var yOffset = -1; yOffset <= 1; ++yOffset)
             {
@@ -177,8 +177,8 @@ namespace GameOfLife.Utilities
         public static int CountNeighborsToroidal(int x, int y, bool[,] universe)
         {
             var count = 0;
-            var xLength = universe.GetLength(0);
-            var yLength = universe.GetLength(1);
+            var xLength = AppSettings.UniverseWidth;
+            var yLength = AppSettings.UniverseHeight;
 
             for(var yOffset = -1; yOffset <= 1; ++yOffset)
             {
@@ -232,9 +232,9 @@ namespace GameOfLife.Utilities
         {
             var count = 0;
 
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(1); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
                     if(universe[x, y])
                     {

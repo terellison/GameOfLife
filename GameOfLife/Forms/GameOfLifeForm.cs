@@ -56,9 +56,9 @@ namespace GameOfLife.Forms
         {
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
-            var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
+            var cellWidth = (float)graphicsPanel.ClientSize.Width / AppSettings.UniverseWidth;
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
-            var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
+            var cellHeight = (float)graphicsPanel.ClientSize.Height / AppSettings.UniverseHeight;
 
             // A Pen for drawing the grid lines (color, width)
             var gridPen = new Pen(AppSettings.GridColor, 1);
@@ -67,10 +67,10 @@ namespace GameOfLife.Forms
             Brush cellBrush = new SolidBrush(AppSettings.CellColor);
 
             // Iterate through the universe in the y, top to bottom
-            for(var y = 0; y < universe.GetLength(1); y++)
+            for(var y = 0; y < AppSettings.UniverseHeight; y++)
             {
                 // Iterate through the universe in the x, left to right
-                for(var x = 0; x < universe.GetLength(0); x++)
+                for(var x = 0; x < AppSettings.UniverseWidth; x++)
                 {
                     // A rectangle to represent each cell in pixels
                     RectangleF cellRect = Rectangle.Empty;
@@ -132,8 +132,8 @@ namespace GameOfLife.Forms
             if(e.Button == MouseButtons.Left)
             {
                 // Calculate the width and height of each cell in pixels
-                var cellWidth = (float)graphicsPanel.ClientSize.Width / universe.GetLength(0);
-                var cellHeight = (float)graphicsPanel.ClientSize.Height / universe.GetLength(1);
+                var cellWidth = (float)graphicsPanel.ClientSize.Width / AppSettings.UniverseWidth;
+                var cellHeight = (float)graphicsPanel.ClientSize.Height / AppSettings.UniverseHeight;
 
                 // Calculate the cell that was clicked in
                 // CELL X = MOUSE X / CELL WIDTH
@@ -178,9 +178,9 @@ namespace GameOfLife.Forms
 
             universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
                     universe[x, y] = false;
                 }
@@ -204,9 +204,9 @@ namespace GameOfLife.Forms
 
             universe = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
-            for(var y = 0; y < universe.GetLength(1); ++y)
+            for(var y = 0; y < AppSettings.UniverseHeight; ++y)
             {
-                for(var x = 0; x < universe.GetLength(0); ++x)
+                for(var x = 0; x < AppSettings.UniverseWidth; ++x)
                 {
                     universe[x, y] = Convert.ToBoolean(rand.Next(0, 2));
                 }
@@ -243,8 +243,8 @@ namespace GameOfLife.Forms
         {
             using(var dialog = new ResizeUniverseDialog
             {
-                UniverseWidth = universe.GetLength(0),
-                UniverseHeight = universe.GetLength(1)
+                UniverseWidth = AppSettings.UniverseWidth,
+                UniverseHeight = AppSettings.UniverseHeight
             })
             {
                 if(dialog.ShowDialog() == DialogResult.OK)
