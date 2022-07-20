@@ -88,8 +88,10 @@ namespace GameOfLife.Utilities
                     }
                 }
             }
+            AppSettings.UniverseWidth = width;
+            AppSettings.UniverseHeight = height;
 
-            var data = new bool[width, height];
+            var data = new bool[AppSettings.UniverseWidth, AppSettings.UniverseHeight];
 
             for(var y = 0; y < data.GetLength(1); ++y)
             {
