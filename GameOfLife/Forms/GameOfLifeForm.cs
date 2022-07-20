@@ -33,6 +33,7 @@ namespace GameOfLife.Forms
             showGridToolStripMenuItem.Checked = AppSettings.DrawGrid;
             showNeighborCountToolStripMenuItem.Checked = AppSettings.ShowNeighbors;
             showCellsAliveToolStripMenuItem.Checked = AppSettings.ShowCellsAlive;
+            toroidalToolStripMenuItem.Checked = AppSettings.Toroidal;
             cellsAliveStatusLabel.Visible = AppSettings.ShowCellsAlive;
 
             randomizeToolStripMenuItem.PerformClick();
